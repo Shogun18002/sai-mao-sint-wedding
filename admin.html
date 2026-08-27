@@ -73,7 +73,7 @@
   <script>
     const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_p-QpdFPCd4at60SvCAEpfg_Z0Y8wTGQ"; 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let sectionsData = [];
 
@@ -85,7 +85,7 @@
       const p = document.getElementById('password').value.trim();
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await dbClient
           .from('admin_users')
           .select('*')
           .eq('username', u)
@@ -113,7 +113,7 @@
     }
 
     async function initDashboard() {
-      const { data } = await supabase.from('story_sections').select('*').order('section_order');
+      const { data } = await dbClient.from('story_sections').select('*').order('section_order');
       if (data) {
         sectionsData = data;
         const s1 = document.getElementById('section-select');
@@ -139,7 +139,7 @@
       const id = document.getElementById('section-select').value;
       if (!id) return alert('Select a section first!');
 
-      await supabase.from('story_sections').update({
+      await dbClient.from('story_sections').update({
         title: document.getElementById('edit-title').value,
         subtitle: document.getElementById('edit-subtitle').value,
         letter_text: document.getElementById('edit-letter').value
@@ -157,7 +157,7 @@
 
       if (!section_id || !photo_url) return alert('Section and Photo URL are required!');
 
-      await supabase.from('section_photos').insert([{ section_id, photo_url, caption, photo_order }]);
+      await dbClient.from('section_photos').insert([{ section_id, photo_url, caption, photo_order }]);
       alert('Photo added!');
       document.getElementById('photo-url').value = '';
       document.getElementById('photo-caption').value = '';
