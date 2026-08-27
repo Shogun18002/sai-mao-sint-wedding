@@ -136,44 +136,48 @@
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     async function loadStory() {
-      const { data: sections } = await supabase.from('story_sections').select('*').order('section_order', { ascending: true });
-      const { data: photos } = await supabase.from('section_photos').select('*').order('photo_order', { ascending: true });
+      try {
+        const { data: sections } = await supabase.from('story_sections').select('*').order('section_order', { ascending: true });
+        const { data: photos } = await supabase.from('section_photos').select('*').order('photo_order', { ascending: true });
 
-      if (!sections) return;
-      
-      const container = document.getElementById('timeline-sections');
-      container.innerHTML = sections.map(sec => {
-        const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
-        const isWedding = sec.section_order === 6;
-        const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
-        const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
+        if (!sections || sections.length === 0) return;
+        
+        const container = document.getElementById('timeline-sections');
+        container.innerHTML = sections.map(sec => {
+          const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
+          const isWedding = sec.section_order === 6;
+          const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
+          const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
 
-        const totalSlots = isWedding ? 20 : 3;
-        let photoMarkup = '';
+          const totalSlots = isWedding ? 20 : 3;
+          let photoMarkup = '';
 
-        for (let i = 0; i < totalSlots; i++) {
-          const p = secPhotos[i];
-          const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
-          const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
-          photoMarkup += `
-            <div class="${frameClass}">
-              <img src="${imgUrl}" alt="${caption}" />
-              <div class="frame-caption">${caption}</div>
-            </div>
+          for (let i = 0; i < totalSlots; i++) {
+            const p = secPhotos[i];
+            const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
+            const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
+            photoMarkup += `
+              <div class="${frameClass}">
+                <img src="${imgUrl}" alt="${caption}" />
+                <div class="frame-caption">${caption}</div>
+              </div>
+            `;
+          }
+
+          return `
+            <section class="timeline-section">
+              <div class="section-header">
+                <h2 class="section-title">${sec.title}</h2>
+                <div class="section-subtitle">${sec.subtitle || ''}</div>
+              </div>
+              <div class="section-letter">"${sec.letter_text || ''}"</div>
+              <div class="${gridClass}">${photoMarkup}</div>
+            </section>
           `;
-        }
-
-        return `
-          <section class="timeline-section">
-            <div class="section-header">
-              <h2 class="section-title">${sec.title}</h2>
-              <div class="section-subtitle">${sec.subtitle || ''}</div>
-            </div>
-            <div class="section-letter">"${sec.letter_text || ''}"</div>
-            <div class="${gridClass}">${photoMarkup}</div>
-          </section>
-        `;
-      }).join('');
+        }).join('');
+      } catch (e) {
+        console.error("Supabase load error:", e);
+      }
     }
     loadStory();
   </script>
