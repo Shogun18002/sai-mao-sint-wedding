@@ -310,43 +310,7 @@
   </div>
 
   <script>
-    // 1. INITIALIZE SUPABASE
-    const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE"; // <--- PASTE YOUR KEY HERE
-
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Fetch chapters dynamically from Supabase
-    async function fetchChapters() {
-      const { data: chapters, error } = await supabase
-        .from('chapters')
-        .select('*')
-        .order('chapter_number', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching chapters:', error);
-        return;
-      }
-
-      const container = document.getElementById('dynamic-chapters');
-      container.innerHTML = chapters.map(ch => `
-        <section class="chapter-section">
-          <div class="chapter-header">
-            <div class="chapter-tag">Chapter 0${ch.chapter_number}</div>
-            <h2 class="chapter-title">${ch.title}</h2>
-            <div class="chapter-meta">${ch.date_text}</div>
-          </div>
-          <div class="vintage-photo-frame">
-            <img class="photo-img" src="${ch.photo_url}" alt="${ch.title}" />
-            <div class="photo-caption">${ch.caption}</div>
-          </div>
-        </section>
-      `).join('');
-    }
-
-    fetchChapters();
-
-    // 2. THREE.JS ATMOSPHERIC BACKGROUND
+    // 1. THREE.JS ATMOSPHERIC BACKGROUND (Runs First!)
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0a0915, 0.018);
@@ -410,7 +374,7 @@
     }
     animate();
 
-    // 3. ENTER BUTTON TRANSITION
+    // 2. ENTER BUTTON TRANSITION
     document.getElementById('enter-btn').addEventListener('click', () => {
       const tl = gsap.timeline();
 
@@ -430,7 +394,7 @@
       tl.to("#story-container", { opacity: 1, duration: 1.5 }, "-=1");
     });
 
-    // 4. 3D INVITATION CARD TILT
+    // 3. 3D INVITATION CARD TILT
     const card = document.getElementById('invitation-card');
     document.addEventListener('mousemove', (e) => {
       if (document.getElementById('story-container').style.display === 'block') {
@@ -446,6 +410,42 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // 4. SAFE SUPABASE CONNECTION (Catches key errors without breaking 3D visual)
+    const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE"; 
+
+    if (SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_KEY_HERE") {
+      try {
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        async function fetchChapters() {
+          const { data: chapters, error } = await supabase
+            .from('chapters')
+            .select('*')
+            .order('chapter_number', { ascending: true });
+
+          if (!error && chapters) {
+            const container = document.getElementById('dynamic-chapters');
+            container.innerHTML = chapters.map(ch => `
+              <section class="chapter-section">
+                <div class="chapter-header">
+                  <div class="chapter-tag">Chapter 0${ch.chapter_number}</div>
+                  <h2 class="chapter-title">${ch.title}</h2>
+                  <div class="chapter-meta">${ch.date_text}</div>
+                </div>
+                <div class="vintage-photo-frame">
+                  <img class="photo-img" src="${ch.photo_url}" alt="${ch.title}" />
+                  <div class="photo-caption">${ch.caption}</div>
+                </div>
+              </section>
+            `).join('');
+          }
+        }
+        fetchChapters();
+      } catch (err) {
+        console.warn('Supabase key pending configuration.');
+      }
+    }
   </script>
 </body>
 </html>
