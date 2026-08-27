@@ -10,7 +10,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0f0e17; color: #fffffe; font-family: 'Inter', sans-serif; padding: 20px; }
     
-    /* Login Overlay */
     #login-modal { position: fixed; inset: 0; background: #0f0e17; z-index: 1000; display: flex; align-items: center; justify-content: center; }
     .login-box { background: #16161a; padding: 40px; border-radius: 8px; border: 1px solid #72757e; width: 100%; max-width: 360px; text-align: center; }
     .login-box h2 { font-family: 'Cinzel', serif; color: #ff8906; margin-bottom: 20px; }
@@ -19,7 +18,6 @@
     button { width: 100%; padding: 12px; background: #ff8906; border: none; color: #fffffe; font-weight: 600; cursor: pointer; border-radius: 4px; transition: background 0.2s; }
     button:hover { background: #e57b00; }
 
-    /* Dashboard UI */
     #dashboard { display: none; max-width: 1000px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #72757e; padding-bottom: 20px; margin-bottom: 30px; }
     h1 { font-family: 'Cinzel', serif; color: #ff8906; }
@@ -31,7 +29,6 @@
 </head>
 <body>
 
-  <!-- LOGIN MODAL -->
   <div id="login-modal">
     <div class="login-box">
       <h2>Admin Access</h2>
@@ -42,14 +39,12 @@
     </div>
   </div>
 
-  <!-- DASHBOARD UI -->
   <div id="dashboard">
     <header>
       <h1>Story Content Manager</h1>
       <button onclick="logout()" style="width: auto; padding: 8px 16px; background: #f25f4c;">Logout</button>
     </header>
 
-    <!-- SECTION & LETTER MANAGER -->
     <div class="card">
       <h3>Edit Section Letter & Details</h3>
       <select id="section-select" onchange="loadSectionDetails()">
@@ -61,7 +56,6 @@
       <button onclick="saveSection()">Update Section Letter</button>
     </div>
 
-    <!-- PHOTO MANAGER -->
     <div class="card">
       <h3>Upload / Add Photo to Section</h3>
       <select id="photo-section-select">
@@ -78,7 +72,7 @@
 
   <script>
     const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE"; 
+    const SUPABASE_ANON_KEY = "sb_publishable_p-QpdFPCd4at60SvCAEpfg_Z0Y8wTGQ"; 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let sectionsData = [];
@@ -110,8 +104,8 @@
         const s2 = document.getElementById('photo-section-select');
         
         const options = data.map(s => `<option value="${s.id}">${s.section_order}. ${s.title}</option>`).join('');
-        s1.innerHTML += options;
-        s2.innerHTML += options;
+        s1.innerHTML = '<option value="">Select Timeline Event...</option>' + options;
+        s2.innerHTML = '<option value="">Select Section for Photo...</option>' + options;
       }
     }
 
