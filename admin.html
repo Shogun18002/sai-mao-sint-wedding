@@ -78,17 +78,33 @@
     let sectionsData = [];
 
     async function login() {
-      const u = document.getElementById('username').value;
-      const p = document.getElementById('password').value;
+      const errDiv = document.getElementById('login-err');
+      errDiv.innerText = "Verifying...";
+      
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
 
-      const { data, error } = await supabase.from('admin_users').select('*').eq('username', u).eq('password', p).single();
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('username', u)
+          .eq('password', p);
 
-      if (data) {
-        document.getElementById('login-modal').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        initDashboard();
-      } else {
-        document.getElementById('login-err').innerText = 'Invalid username or password';
+        if (error) {
+          errDiv.innerText = "Error: " + error.message;
+          return;
+        }
+
+        if (data && data.length > 0) {
+          document.getElementById('login-modal').style.display = 'none';
+          document.getElementById('dashboard').style.display = 'block';
+          initDashboard();
+        } else {
+          errDiv.innerText = 'Invalid username or password';
+        }
+      } catch (err) {
+        errDiv.innerText = "Connection failed. Please check network.";
       }
     }
 
