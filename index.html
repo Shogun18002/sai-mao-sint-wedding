@@ -5,275 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sai Mao Sint & Nang Ngin Zat Noum — Our Story</title>
   
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
-  <!-- Libraries via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 100%; min-height: 100%; background-color: #0a0915; font-family: 'Cinzel', serif; color: #f7e7ce; overflow-x: hidden; }
+    #webgl-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+    
+    .gateway-ui { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+    .subtitle { font-size: 0.85rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(212, 175, 55, 0.85); margin-bottom: 1.5rem; }
+    .title { font-size: 2.8rem; letter-spacing: 0.15em; color: #fff6e5; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); line-height: 1.2; }
+    .ampersand { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: #d4af37; margin: 0.5rem 0; }
+    
+    .enter-btn { cursor: pointer; margin-top: 3rem; padding: 16px 36px; background: rgba(26, 20, 10, 0.6); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 50px; color: #fff6e5; font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 0.25em; text-transform: uppercase; backdrop-filter: blur(8px); transition: all 0.4s ease; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
+    .enter-btn:hover { border-color: #d4af37; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.03); }
 
-    body, html {
-      width: 100%;
-      min-height: 100%;
-      background-color: #0a0915;
-      font-family: 'Cinzel', serif;
-      color: #f7e7ce;
-      overflow-x: hidden;
-    }
+    #flash-overlay { position: fixed; inset: 0; background: #ffffff; opacity: 0; z-index: 100; pointer-events: none; }
+    #story-container { position: relative; z-index: 20; display: none; opacity: 0; width: 100%; padding-bottom: 100px; }
 
-    /* 3D WebGL Canvas */
-    #webgl-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 1;
-      pointer-events: none;
-    }
+    .invitation-section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; perspective: 1000px; }
+    .invitation-card { background: #fdfbf7; color: #2c251e; border: 2px solid #d4af37; padding: 50px 40px; max-width: 580px; width: 100%; text-align: center; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.2); transform-style: preserve-3d; transition: transform 0.15s ease-out; position: relative; }
+    .invitation-card::after { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(212, 175, 55, 0.4); pointer-events: none; }
+    
+    .timeline-section { max-width: 1100px; margin: 100px auto; padding: 0 20px; text-align: center; }
+    .section-header { margin-bottom: 2.5rem; }
+    .section-title { font-size: 2.2rem; color: #fff6e5; letter-spacing: 0.1em; }
+    .section-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #d4af37; margin-top: 0.5rem; font-size: 1.1rem; }
+    .section-letter { font-family: 'Playfair Display', serif; color: rgba(247, 231, 206, 0.85); font-size: 1.15rem; line-height: 1.8; max-width: 750px; margin: 0 auto 3rem auto; font-style: italic; background: rgba(20, 18, 35, 0.5); padding: 25px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2); }
 
-    /* GATEWAY SCREEN */
-    .gateway-ui {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
+    /* Grids */
+    .photo-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 2rem; }
+    .photo-grid-wedding { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 2rem; }
 
-    .subtitle {
-      font-size: 0.85rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: rgba(212, 175, 55, 0.85);
-      margin-bottom: 1.5rem;
-    }
-
-    .title {
-      font-size: 2.8rem;
-      letter-spacing: 0.15em;
-      color: #fff6e5;
-      text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-      line-height: 1.2;
-    }
-
-    .ampersand {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 2rem;
-      color: #d4af37;
-      margin: 0.5rem 0;
-    }
-
-    .enter-btn {
-      cursor: pointer;
-      margin-top: 3rem;
-      padding: 16px 36px;
-      background: rgba(26, 20, 10, 0.6);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 50px;
-      color: #fff6e5;
-      font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      backdrop-filter: blur(8px);
-      transition: all 0.4s ease;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    }
-
-    .enter-btn:hover {
-      border-color: #d4af37;
-      background: rgba(212, 175, 55, 0.2);
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-      transform: scale(1.03);
-    }
-
-    /* WHITE FLASH OVERLAY */
-    #flash-overlay {
-      position: fixed;
-      inset: 0;
-      background: #ffffff;
-      opacity: 0;
-      z-index: 100;
-      pointer-events: none;
-    }
-
-    /* MAIN STORY WRAPPER */
-    #story-container {
-      position: relative;
-      z-index: 20;
-      display: none;
-      opacity: 0;
-      width: 100%;
-    }
-
-    /* INVITATION CARD SECTION */
-    .invitation-section {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      perspective: 1000px;
-    }
-
-    .invitation-card {
-      background: #fdfbf7;
-      color: #2c251e;
-      border: 2px solid #d4af37;
-      padding: 50px 40px;
-      max-width: 580px;
-      width: 100%;
-      text-align: center;
-      border-radius: 4px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.2);
-      transform-style: preserve-3d;
-      transition: transform 0.15s ease-out;
-      position: relative;
-    }
-
-    .invitation-card::after {
-      content: '';
-      position: absolute;
-      inset: 8px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      pointer-events: none;
-    }
-
-    .invitation-card h3 {
-      font-size: 0.75rem;
-      letter-spacing: 0.35em;
-      color: #8c733e;
-      margin-bottom: 1.5rem;
-    }
-
-    .invitation-card h1 {
-      font-size: 2.2rem;
-      color: #1a1510;
-      margin-bottom: 0.5rem;
-      letter-spacing: 0.05em;
-    }
-
-    .invitation-card p.message {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      color: #5a4e3e;
-      margin: 2rem 0;
-      line-height: 1.6;
-      font-size: 1.05rem;
-    }
-
-    .scroll-hint {
-      margin-top: 3rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.25em;
-      color: #d4af37;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-8px); }
-      60% { transform: translateY(-4px); }
-    }
-
-    /* TIMELINE CHAPTERS */
-    .chapter-section {
-      min-height: 80vh;
-      padding: 60px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .chapter-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .chapter-tag {
-      font-size: 0.8rem;
-      letter-spacing: 0.3em;
-      color: #d4af37;
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
-    }
-
-    .chapter-title {
-      font-size: 2.2rem;
-      color: #fff6e5;
-      letter-spacing: 0.1em;
-    }
-
-    .chapter-meta {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      color: rgba(247, 231, 206, 0.7);
-      margin-top: 0.5rem;
-    }
-
-    .vintage-photo-frame {
-      background: #fdfbf7;
-      padding: 16px 16px 45px 16px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-      transform: rotate(-1deg);
-      transition: all 0.4s ease;
-      position: relative;
-      max-width: 480px;
-      width: 100%;
-    }
-
-    .vintage-photo-frame:hover {
-      transform: scale(1.03) rotate(0deg);
-      box-shadow: 0 25px 50px rgba(212,175,55,0.3);
-    }
-
-    .photo-img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      border: 1px solid rgba(212,175,55,0.2);
-      display: block;
-    }
-
-    .photo-caption {
-      position: absolute;
-      bottom: 12px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      color: #3a3025;
-      font-size: 0.95rem;
-    }
+    .vintage-frame { background: #fdfbf7; padding: 12px 12px 35px 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-radius: 3px; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; }
+    .vintage-frame:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3); }
+    .vintage-frame img { width: 100%; height: 240px; object-fit: cover; display: block; }
+    .wedding-frame img { height: 180px; }
+    .frame-caption { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-family: 'Playfair Display', serif; font-style: italic; color: #3a3025; font-size: 0.85rem; }
+    
+    .admin-link { position: fixed; bottom: 15px; right: 15px; z-index: 99; color: rgba(212, 175, 55, 0.5); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.1em; }
+    .admin-link:hover { color: #d4af37; }
   </style>
 </head>
 <body>
 
-  <!-- 3D Canvas -->
   <div id="webgl-container"></div>
 
-  <!-- Gateway Screen -->
   <div class="gateway-ui" id="gateway-ui">
     <div class="subtitle">A Story Written Through Time</div>
     <div class="title">SAI MAO SINT</div>
@@ -282,169 +65,122 @@
     <button class="enter-btn" id="enter-btn">Enter Our Story</button>
   </div>
 
-  <!-- White Flash Overlay -->
   <div id="flash-overlay"></div>
 
-  <!-- Story Scroll Content -->
   <div id="story-container">
-    
-    <!-- Invitation Section -->
     <section class="invitation-section">
       <div class="invitation-card" id="invitation-card">
         <h3>YOU ARE INVITED TO CELEBRATE THE WEDDING OF</h3>
-        <h1>Sai Mao Sint</h1>
+        <h1 id="inv-groom">Sai Mao Sint</h1>
         <div class="ampersand" style="color: #8c733e;">&</div>
-        <h1>Nang Ngin Zat Noum</h1>
-        <p class="message">"Two people. One journey. Countless memories. And a lifetime still waiting to be written."</p>
+        <h1 id="inv-bride">Nang Ngin Zat Noum</h1>
+        <p class="message" id="inv-quote">"Two people. One journey. Countless memories. And a lifetime still waiting to be written."</p>
         <div style="margin-top: 2rem; font-size: 0.85rem; letter-spacing: 0.2em; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 1.5rem;">
-          <div>DATE: DECEMBER 31, 2026</div>
-          <div style="margin-top: 0.5rem;">LOCATION: GRAND BALLROOM</div>
+          <div id="inv-date">DATE: DECEMBER 31, 2026</div>
+          <div id="inv-location" style="margin-top: 0.5rem;">LOCATION: GRAND BALLROOM</div>
         </div>
       </div>
-      <div class="scroll-hint">BEGIN OUR STORY ↓</div>
     </section>
 
-    <!-- Dynamic Chapters loaded from Supabase will appear here -->
-    <div id="dynamic-chapters"></div>
-
+    <div id="timeline-sections"></div>
   </div>
 
+  <a href="admin.html" class="admin-link">Dashboard Login ⚙</a>
+
   <script>
-    // 1. THREE.JS ATMOSPHERIC BACKGROUND (Runs First!)
+    // THREE.JS SETUP
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0a0915, 0.018);
-
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 12);
-
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Gateway Pillars
     const pillarMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true });
     const pillarGeo = new THREE.CylinderGeometry(0.8, 1, 14, 16);
-    
-    const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
-    leftPillar.position.set(-5, 0, -3);
-    scene.add(leftPillar);
+    const leftPillar = new THREE.Mesh(pillarGeo, pillarMat); leftPillar.position.set(-5, 0, -3); scene.add(leftPillar);
+    const rightPillar = new THREE.Mesh(pillarGeo, pillarMat); rightPillar.position.set(5, 0, -3); scene.add(rightPillar);
 
-    const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
-    rightPillar.position.set(5, 0, -3);
-    scene.add(rightPillar);
-
-    // Floating Particles
-    const particleCount = 400;
-    const particleGeo = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 30;
-    }
-
+    const particleCount = 400; const particleGeo = new THREE.BufferGeometry(); const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) positions[i] = (Math.random() - 0.5) * 30;
     particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particleMat = new THREE.PointsMaterial({
-      color: 0xffe4b5,
-      size: 0.09,
-      transparent: true,
-      opacity: 0.75
-    });
-
-    const particles = new THREE.Points(particleGeo, particleMat);
+    const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0xffe4b5, size: 0.09, transparent: true, opacity: 0.75 }));
     scene.add(particles);
 
-    // Mouse Tracking Animation
     let mouseX = 0, mouseY = 0;
-    window.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
-    });
-
+    window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; mouseY = -(e.clientY / window.innerHeight - 0.5) * 2; });
     function animate() {
-      requestAnimationFrame(animate);
-      particles.rotation.y += 0.0006;
-      
+      requestAnimationFrame(animate); particles.rotation.y += 0.0006;
       camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.05;
       camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.05;
-      camera.lookAt(0, 0, 0);
-
-      renderer.render(scene, camera);
+      camera.lookAt(0, 0, 0); renderer.render(scene, camera);
     }
     animate();
 
-    // 2. ENTER BUTTON TRANSITION
     document.getElementById('enter-btn').addEventListener('click', () => {
       const tl = gsap.timeline();
-
       tl.to("#gateway-ui", { opacity: 0, duration: 1, ease: "power2.out" });
       tl.to(camera.position, { z: -1, duration: 2, ease: "power3.in" }, "-=0.5");
-      tl.to("#flash-overlay", { 
-        opacity: 1, 
-        duration: 1, 
-        ease: "power4.in",
-        onComplete: () => {
-          document.getElementById('gateway-ui').style.display = 'none';
-          const storyContainer = document.getElementById('story-container');
-          storyContainer.style.display = 'block';
-        }
-      });
+      tl.to("#flash-overlay", { opacity: 1, duration: 1, ease: "power4.in", onComplete: () => {
+        document.getElementById('gateway-ui').style.display = 'none';
+        document.getElementById('story-container').style.display = 'block';
+      }});
       tl.to("#flash-overlay", { opacity: 0, duration: 1.5, ease: "power2.out" });
       tl.to("#story-container", { opacity: 1, duration: 1.5 }, "-=1");
     });
 
-    // 3. 3D INVITATION CARD TILT
-    const card = document.getElementById('invitation-card');
-    document.addEventListener('mousemove', (e) => {
-      if (document.getElementById('story-container').style.display === 'block') {
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-        card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-      }
-    });
-
-    // Window Resize
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // 4. SAFE SUPABASE CONNECTION (Catches key errors without breaking 3D visual)
+    // SUPABASE DATA RENDER
     const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE"; 
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";
 
     if (SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_KEY_HERE") {
-      try {
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        async function fetchChapters() {
-          const { data: chapters, error } = await supabase
-            .from('chapters')
-            .select('*')
-            .order('chapter_number', { ascending: true });
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      async function loadStory() {
+        const { data: sections } = await supabase.from('story_sections').select('*').order('section_order', { ascending: true });
+        const { data: photos } = await supabase.from('section_photos').select('*').order('photo_order', { ascending: true });
 
-          if (!error && chapters) {
-            const container = document.getElementById('dynamic-chapters');
-            container.innerHTML = chapters.map(ch => `
-              <section class="chapter-section">
-                <div class="chapter-header">
-                  <div class="chapter-tag">Chapter 0${ch.chapter_number}</div>
-                  <h2 class="chapter-title">${ch.title}</h2>
-                  <div class="chapter-meta">${ch.date_text}</div>
-                </div>
-                <div class="vintage-photo-frame">
-                  <img class="photo-img" src="${ch.photo_url}" alt="${ch.title}" />
-                  <div class="photo-caption">${ch.caption}</div>
-                </div>
-              </section>
-            `).join('');
+        if (!sections) return;
+        
+        const container = document.getElementById('timeline-sections');
+        container.innerHTML = sections.map(sec => {
+          const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
+          const isWedding = sec.section_order === 6;
+          const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
+          const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
+
+          // Placeholder slots if database has fewer photos uploaded yet
+          const totalSlots = isWedding ? 20 : 3;
+          let photoMarkup = '';
+
+          for (let i = 0; i < totalSlots; i++) {
+            const p = secPhotos[i];
+            const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
+            const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
+            photoMarkup += `
+              <div class="${frameClass}">
+                <img src="${imgUrl}" alt="${caption}" />
+                <div class="frame-caption">${caption}</div>
+              </div>
+            `;
           }
-        }
-        fetchChapters();
-      } catch (err) {
-        console.warn('Supabase key pending configuration.');
+
+          return `
+            <section class="timeline-section">
+              <div class="section-header">
+                <h2 class="section-title">${sec.title}</h2>
+                <div class="section-subtitle">${sec.subtitle || ''}</div>
+              </div>
+              <div class="section-letter">"${sec.letter_text || ''}"</div>
+              <div class="${gridClass}">${photoMarkup}</div>
+            </section>
+          `;
+        }).join('');
       }
+      loadStory();
     }
   </script>
 </body>
