@@ -1,240 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - GitHub Photo Uploader</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-  </style>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4">
-  <div class="max-w-2xl mx-auto space-y-6">
-    
-    <!-- Header -->
-    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold text-white">GitHub Photo Uploader</h1>
-          <p class="text-xs text-slate-400">Upload images directly to your GitHub repository</p>
-        </div>
-      </div>
-      <a href="index.html" target="_blank" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium bg-indigo-950/50 px-3 py-2 rounded-lg border border-indigo-800/50 transition">
-        View Site <i class="fa-solid fa-arrow-up-right-from-square"></i>
-      </a>
-    </div>
-
-    <!-- Configuration Settings -->
-    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl space-y-4">
-      <h2 class="text-lg font-semibold text-white flex items-center gap-2">
-        <i class="fa-solid fa-gear text-indigo-400"></i> GitHub API Setup
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">GitHub Username / Owner</label>
-          <input type="text" id="repoOwner" placeholder="e.g. yourusername" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Repository Name</label>
-          <input type="text" id="repoName" placeholder="e.g. my-story-website" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs font-medium text-slate-300 mb-1">GitHub Personal Access Token (PAT)</label>
-        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-        <p class="text-[11px] text-slate-400 mt-1">Requires <code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">repo</code> scope. Your credentials are saved locally in your browser.</p>
-      </div>
-      <button onclick="saveConfig()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-2 rounded-xl text-xs transition">
-        Save Configuration
-      </button>
-    </div>
-
-    <!-- Upload Form -->
-    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl space-y-5">
-      <h2 class="text-lg font-semibold text-white flex items-center gap-2">
-        <i class="fa-solid fa-image text-indigo-400"></i> Upload New Photo
-      </h2>
-      
-      <div>
-        <label class="block text-xs font-medium text-slate-300 mb-1">Target Folder / Path</label>
-        <input type="text" id="uploadPath" value="images/" placeholder="images/" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-      </div>
-
-      <!-- Drag & Drop Zone -->
-      <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-6 text-center bg-slate-900/50 cursor-pointer transition">
-        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
-        <div id="uploadPrompt" class="space-y-2">
-          <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-500"></i>
-          <p class="text-sm text-slate-300">Click to browse or drop an image here</p>
-          <p class="text-xs text-slate-500">PNG, JPG, WEBP or GIF format</p>
-        </div>
-        <div id="imagePreviewContainer" class="hidden space-y-3">
-          <img id="imagePreview" class="max-h-48 mx-auto rounded-xl object-contain shadow-lg border border-slate-700">
-          <p id="fileName" class="text-xs text-slate-400 font-mono"></p>
-        </div>
-      </div>
-
-      <!-- Commit Message -->
-      <div>
-        <label class="block text-xs font-medium text-slate-300 mb-1">Commit Message</label>
-        <input type="text" id="commitMsg" value="Add new photo via Admin panel" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-      </div>
-
-      <!-- Upload Button -->
-      <button id="uploadBtn" onclick="uploadImage()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl text-sm shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-upload"></i> Upload to GitHub
-      </button>
-
-      <!-- Status Alert -->
-      <div id="statusAlert" class="hidden p-4 rounded-xl text-xs font-medium border"></div>
-    </div>
-  </div>
-
-  <script>
-    // Load stored settings on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('repoOwner').value = localStorage.getItem('gh_owner') || '';
-      document.getElementById('repoName').value = localStorage.getItem('gh_repo') || '';
-      document.getElementById('githubToken').value = localStorage.getItem('gh_token') || '';
-    });
-
-    function saveConfig() {
-      const owner = document.getElementById('repoOwner').value.trim();
-      const repo = document.getElementById('repoName').value.trim();
-      const token = document.getElementById('githubToken').value.trim();
-
-      localStorage.setItem('gh_owner', owner);
-      localStorage.setItem('gh_repo', repo);
-      localStorage.setItem('gh_token', token);
-
-      showStatus('Configuration saved to browser local storage!', 'success');
-    }
-
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    let selectedFile = null;
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
-    dropZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropZone.classList.remove('border-indigo-500');
-      if (e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        handleFileSelect();
-      }
-    });
-
-    function handleFileSelect() {
-      const file = fileInput.files[0];
-      if (!file) return;
-      selectedFile = file;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.getElementById('imagePreview').src = e.target.result;
-        document.getElementById('fileName').innerText = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-        document.getElementById('uploadPrompt').classList.add('hidden');
-        document.getElementById('imagePreviewContainer').classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function uploadImage() {
-      const owner = document.getElementById('repoOwner').value.trim();
-      const repo = document.getElementById('repoName').value.trim();
-      const token = document.getElementById('githubToken').value.trim();
-      let path = document.getElementById('uploadPath').value.trim();
-      const commitMsg = document.getElementById('commitMsg').value.trim();
-
-      if (!owner || !repo || !token) {
-        showStatus('Please complete the GitHub API setup section first.', 'error');
-        return;
-      }
-      if (!selectedFile) {
-        showStatus('Please choose an image file to upload.', 'error');
-        return;
-      }
-
-      // Format path properly
-      if (path && !path.endsWith('/')) path += '/';
-      const fullPath = `${path}${selectedFile.name}`.replace(/^\/+/, '');
-
-      const btn = document.getElementById('uploadBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Uploading...`;
-
-      try {
-        // Convert file to Base64
-        const base64Content = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = reject;
-          reader.readAsDataURL(selectedFile);
-        });
-
-        // GitHub REST API endpoint for creating/updating contents
-        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${fullPath}`;
-
-        const response = await fetch(apiUrl, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: commitMsg || `Upload ${selectedFile.name}`,
-            content: base64Content
-          })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          showStatus(`Successfully uploaded to <strong>${fullPath}</strong>!`, 'success');
-          // Reset preview
-          selectedFile = null;
-          document.getElementById('uploadPrompt').classList.remove('hidden');
-          document.getElementById('imagePreviewContainer').classList.add('hidden');
-          fileInput.value = '';
-        } else {
-          showStatus(`Error: ${data.message || 'Failed to upload image.'}`, 'error');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Content Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-dark: #0f0f13;
+            --card-bg: #18181f;
+            --accent: #ff8c00;
+            --text-light: #f0f0f0;
+            --text-dim: #a0a0a0;
+            --border: #2a2a35;
         }
-      } catch (err) {
-        showStatus(`Upload failed: ${err.message}`, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload to GitHub`;
-      }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #ff6b35;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0d0d11;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        textarea {
+            resize: vertical;
+            height: 120px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            border: none;
+            border-radius: 5px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .hidden { display: none; }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row .form-group { flex: 1; }
+        #auth-card {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        .status-msg {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        input[type="file"] {
+            padding: 8px;
+            background: #121217;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LOGIN SCREEN -->
+    <div id="auth-card" class="card">
+        <h1>Admin Access</h1>
+        <div class="form-group">
+            <input type="text" id="login-user" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input type="password" id="login-pass" placeholder="Password">
+        </div>
+        <button onclick="handleLogin()">Sign In</button>
+        <div id="login-status" class="status-msg"></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h1>Story Content Manager</h1>
+            <button onclick="handleLogout()" style="width:auto; padding:8px 16px; background:#e63946; color:white;">Logout</button>
+        </div>
+
+        <!-- EDIT SECTION TEXT -->
+        <div class="card">
+            <h2>Edit Section Letter & Details</h2>
+            <div class="form-group">
+                <select id="section-select" onchange="loadSectionData()">
+                    <option value="">Select Timeline Event...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="sec-title" placeholder="Event Title (e.g., 1st Anniversary)">
+            </div>
+            <div class="form-group">
+                <input type="text" id="sec-subtitle" placeholder="Subtitle (e.g., One Year of Love)">
+            </div>
+            <div class="form-group">
+                <textarea id="sec-letter" placeholder="Write letter text here..."></textarea>
+            </div>
+            <button onclick="saveSection()">Update Section Letter</button>
+            <div id="sec-status" class="status-msg"></div>
+        </div>
+
+        <!-- UPLOAD PHOTO FILE -->
+        <div class="card">
+            <h2>Upload Photo to Section</h2>
+            <div class="form-group">
+                <select id="photo-section-select">
+                    <option value="">Select Section for Photo...</option>
+                </select>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Select Local Image File</label>
+                    <input type="file" id="photo-file-input" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Position Number</label>
+                    <input type="number" id="photo-pos" placeholder="Photo Position (1-3 or 1-20)">
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" id="photo-caption" placeholder="Photo Caption (optional)">
+            </div>
+            <button id="upload-btn" onclick="uploadAndSavePhoto()">Upload & Save Photo</button>
+            <div id="photo-status" class="status-msg"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://ejjqaxlwkbcfllggonff.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function handleLogin() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        const status = document.getElementById('login-status');
+        status.style.color = '#ff6b35';
+        status.innerText = 'Checking credentials...';
+
+        try {
+            const { data, error } = await db.from('admin_users').select('*').eq('username', u).eq('password', p);
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                document.getElementById('auth-card').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                initDashboard();
+            } else {
+                status.innerText = 'Invalid username or password.';
+            }
+        } catch (err) {
+            status.innerText = 'Error: ' + err.message;
+        }
     }
 
-    function showStatus(message, type) {
-      const alert = document.getElementById('statusAlert');
-      alert.classList.remove('hidden', 'bg-emerald-900/40', 'border-emerald-700', 'text-emerald-200', 'bg-red-900/40', 'border-red-700', 'text-red-200');
-      
-      if (type === 'success') {
-        alert.classList.add('bg-emerald-900/40', 'border-emerald-700', 'text-emerald-200');
-      } else {
-        alert.classList.add('bg-red-900/40', 'border-red-700', 'text-red-200');
-      }
-      
-      alert.innerHTML = message;
+    function handleLogout() {
+        document.getElementById('dashboard').classList.add('hidden');
+        document.getElementById('auth-card').classList.remove('hidden');
     }
-  </script>
+
+    async function initDashboard() {
+        const { data: sections } = await db.from('story_sections').select('*').order('section_order', { ascending: true });
+        
+        const secSelect = document.getElementById('section-select');
+        const photoSecSelect = document.getElementById('photo-section-select');
+        
+        secSelect.innerHTML = '<option value="">Select Timeline Event...</option>';
+        photoSecSelect.innerHTML = '<option value="">Select Section for Photo...</option>';
+
+        if (sections) {
+            sections.forEach(s => {
+                const opt = `<option value="${s.id}">${s.section_order}. ${s.title}</option>`;
+                secSelect.innerHTML += opt;
+                photoSecSelect.innerHTML += opt;
+            });
+        }
+    }
+
+    async function loadSectionData() {
+        const id = document.getElementById('section-select').value;
+        if (!id) return;
+
+        const { data } = await db.from('story_sections').select('*').eq('id', id).single();
+        if (data) {
+            document.getElementById('sec-title').value = data.title || '';
+            document.getElementById('sec-subtitle').value = data.subtitle || '';
+            document.getElementById('sec-letter').value = data.letter_text || '';
+        }
+    }
+
+    async function saveSection() {
+        const id = document.getElementById('section-select').value;
+        const status = document.getElementById('sec-status');
+        if (!id) return alert('Select an event first.');
+
+        const title = document.getElementById('sec-title').value;
+        const subtitle = document.getElementById('sec-subtitle').value;
+        const letter_text = document.getElementById('sec-letter').value;
+
+        const { error } = await db.from('story_sections').update({ title, subtitle, letter_text }).eq('id', id);
+        if (error) {
+            status.style.color = '#ff4d4d';
+            status.innerText = error.message;
+        } else {
+            status.style.color = '#4efa7b';
+            status.innerText = 'Section updated successfully!';
+            setTimeout(() => status.innerText = '', 3000);
+        }
+    }
+
+    async function uploadAndSavePhoto() {
+        const section_id = document.getElementById('photo-section-select').value;
+        const fileInput = document.getElementById('photo-file-input');
+        const position_num = parseInt(document.getElementById('photo-pos').value);
+        const caption = document.getElementById('photo-caption').value;
+        const status = document.getElementById('photo-status');
+        const btn = document.getElementById('upload-btn');
+
+        if (!section_id || !fileInput.files[0] || isNaN(position_num)) {
+            return alert('Please select a section, pick an image file, and set a position number.');
+        }
+
+        const file = fileInput.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `uploads/${fileName}`;
+
+        try {
+            btn.disabled = true;
+            status.style.color = '#ff8c00';
+            status.innerText = 'Uploading image file...';
+
+            // 1. Upload to Supabase Storage Bucket
+            const { error: uploadErr } = await db.storage
+                .from('wedding-photos')
+                .upload(filePath, file);
+
+            if (uploadErr) throw uploadErr;
+
+            // 2. Get Public URL
+            const { data: urlData } = db.storage
+                .from('wedding-photos')
+                .getPublicUrl(filePath);
+
+            const image_url = urlData.publicUrl;
+
+            status.innerText = 'Saving photo reference to database...';
+
+            // 3. Upsert into database table
+            const { error: dbErr } = await db.from('section_photos').upsert({
+                section_id,
+                position_num,
+                image_url,
+                caption
+            }, { onConflict: 'section_id,position_num' });
+
+            if (dbErr) throw dbErr;
+
+            status.style.color = '#4efa7b';
+            status.innerText = 'Photo uploaded and saved successfully!';
+            fileInput.value = '';
+            document.getElementById('photo-pos').value = '';
+            document.getElementById('photo-caption').value = '';
+
+        } catch (err) {
+            status.style.color = '#ff4d4d';
+            status.innerText = 'Error: ' + err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
+
 </body>
 </html>
-```eof
-
-### How to use this:
-1. Open your repository on GitHub.
-2. Go into `admin.html` (or create a new file named `admin.html`).
-3. Paste the entire code above and commit your changes.
-4. When you visit your live `admin.html` page, enter your **GitHub Username**, **Repository Name**, and **GitHub Personal Access Token (PAT)**. It will save them safely to your local browser storage so you don't have to enter them every time.
