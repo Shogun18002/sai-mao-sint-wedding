@@ -154,14 +154,13 @@
 
     <script>
         const SUPABASE_URL = 'https://ejjqaxlwkbcfllggonff.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G48';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchStory() {
             const container = document.getElementById('timeline-container');
 
             try {
-                // Fetch story sections ordered by section_order
                 const { data: sections, error: secErr } = await db
                     .from('story_sections')
                     .select('*')
@@ -169,7 +168,6 @@
 
                 if (secErr) throw secErr;
 
-                // Fetch all uploaded photos ordered by position
                 const { data: photos, error: photoErr } = await db
                     .from('section_photos')
                     .select('*')
@@ -184,7 +182,6 @@
                     return;
                 }
 
-                // Render each section and its photos
                 sections.forEach(sec => {
                     const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
 
