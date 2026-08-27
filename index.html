@@ -39,7 +39,6 @@
     .section-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #d4af37; margin-top: 0.5rem; font-size: 1.1rem; }
     .section-letter { font-family: 'Playfair Display', serif; color: rgba(247, 231, 206, 0.85); font-size: 1.15rem; line-height: 1.8; max-width: 750px; margin: 0 auto 3rem auto; font-style: italic; background: rgba(20, 18, 35, 0.5); padding: 25px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2); }
 
-    /* Grids */
     .photo-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 2rem; }
     .photo-grid-wedding { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 2rem; }
 
@@ -88,7 +87,6 @@
   <a href="admin.html" class="admin-link">Dashboard Login ⚙</a>
 
   <script>
-    // THREE.JS SETUP
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0a0915, 0.018);
@@ -132,56 +130,52 @@
       tl.to("#story-container", { opacity: 1, duration: 1.5 }, "-=1");
     });
 
-    // SUPABASE DATA RENDER
     const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    const SUPABASE_ANON_KEY = "sb_publishable_p-QpdFPCd4at60SvCAEpfg_Z0Y8wTGQ";
 
-    if (SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_KEY_HERE") {
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    async function loadStory() {
+      const { data: sections } = await supabase.from('story_sections').select('*').order('section_order', { ascending: true });
+      const { data: photos } = await supabase.from('section_photos').select('*').order('photo_order', { ascending: true });
+
+      if (!sections) return;
       
-      async function loadStory() {
-        const { data: sections } = await supabase.from('story_sections').select('*').order('section_order', { ascending: true });
-        const { data: photos } = await supabase.from('section_photos').select('*').order('photo_order', { ascending: true });
+      const container = document.getElementById('timeline-sections');
+      container.innerHTML = sections.map(sec => {
+        const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
+        const isWedding = sec.section_order === 6;
+        const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
+        const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
 
-        if (!sections) return;
-        
-        const container = document.getElementById('timeline-sections');
-        container.innerHTML = sections.map(sec => {
-          const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
-          const isWedding = sec.section_order === 6;
-          const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
-          const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
+        const totalSlots = isWedding ? 20 : 3;
+        let photoMarkup = '';
 
-          // Placeholder slots if database has fewer photos uploaded yet
-          const totalSlots = isWedding ? 20 : 3;
-          let photoMarkup = '';
-
-          for (let i = 0; i < totalSlots; i++) {
-            const p = secPhotos[i];
-            const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
-            const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
-            photoMarkup += `
-              <div class="${frameClass}">
-                <img src="${imgUrl}" alt="${caption}" />
-                <div class="frame-caption">${caption}</div>
-              </div>
-            `;
-          }
-
-          return `
-            <section class="timeline-section">
-              <div class="section-header">
-                <h2 class="section-title">${sec.title}</h2>
-                <div class="section-subtitle">${sec.subtitle || ''}</div>
-              </div>
-              <div class="section-letter">"${sec.letter_text || ''}"</div>
-              <div class="${gridClass}">${photoMarkup}</div>
-            </section>
+        for (let i = 0; i < totalSlots; i++) {
+          const p = secPhotos[i];
+          const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
+          const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
+          photoMarkup += `
+            <div class="${frameClass}">
+              <img src="${imgUrl}" alt="${caption}" />
+              <div class="frame-caption">${caption}</div>
+            </div>
           `;
-        }).join('');
-      }
-      loadStory();
+        }
+
+        return `
+          <section class="timeline-section">
+            <div class="section-header">
+              <h2 class="section-title">${sec.title}</h2>
+              <div class="section-subtitle">${sec.subtitle || ''}</div>
+            </div>
+            <div class="section-letter">"${sec.letter_text || ''}"</div>
+            <div class="${gridClass}">${photoMarkup}</div>
+          </section>
+        `;
+      }).join('');
     }
+    loadStory();
   </script>
 </body>
 </html>
