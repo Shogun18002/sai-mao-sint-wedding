@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sai Mao Sint & Nang Ngin Zat Noum — Our Story</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- Libraries via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background-color: #0a0915;
+      font-family: 'Cinzel', serif;
+      color: #f7e7ce;
+    }
+
+    /* 3D WebGL Canvas */
+    #webgl-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* UI Overlay for Gateway */
+    .gateway-ui {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(212, 175, 55, 0.85);
+      margin-bottom: 1.5rem;
+    }
+
+    .title {
+      font-size: 2.8rem;
+      letter-spacing: 0.15em;
+      color: #fff6e5;
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+      line-height: 1.2;
+    }
+
+    .ampersand {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 2rem;
+      color: #d4af37;
+      margin: 0.5rem 0;
+    }
+
+    /* Fantasy Enter Button */
+    .enter-btn {
+      pointer-events: auto;
+      cursor: pointer;
+      margin-top: 3rem;
+      padding: 16px 36px;
+      background: rgba(26, 20, 10, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 50px;
+      color: #fff6e5;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+      transition: all 0.4s ease;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .enter-btn:hover {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.2);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+      transform: scale(1.03);
+    }
+
+    /* Signature White Flash Overlay */
+    #flash-overlay {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      opacity: 0;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    /* Floating Vintage Invitation Screen */
+    #invitation-screen {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      z-index: 20;
+      display: none;
+      opacity: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .invitation-card {
+      background: #fdfbf7;
+      color: #2c251e;
+      border: 2px solid #d4af37;
+      padding: 50px 40px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .invitation-card h3 {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      color: #8c733e;
+      margin-bottom: 1.5rem;
+    }
+
+    .invitation-card h1 {
+      font-size: 2.2rem;
+      color: #1a1510;
+      margin-bottom: 1rem;
+    }
+
+    .invitation-card p.message {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: #5a4e3e;
+      margin: 2rem 0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D Canvas Container -->
+  <div id="webgl-container"></div>
+
+  <!-- Gateway Title Screen -->
+  <div class="gateway-ui" id="gateway-ui">
+    <div class="subtitle">A Story Written Through Time</div>
+    <div class="title">SAI MAO SINT</div>
+    <div class="ampersand">&</div>
+    <div class="title">NANG NGIN ZAT NOUM</div>
+    <button class="enter-btn" id="enter-btn">Enter Our Story</button>
+  </div>
+
+  <!-- White Flash Overlay -->
+  <div id="flash-overlay"></div>
+
+  <!-- Vintage Invitation View -->
+  <div id="invitation-screen">
+    <div class="invitation-card" id="invitation-card">
+      <h3>YOU ARE INVITED TO CELEBRATE THE WEDDING OF</h3>
+      <h1>Sai Mao Sint & Nang Ngin Zat Noum</h1>
+      <p class="message">"Two people. One journey. Countless memories. And a lifetime still waiting to be written."</p>
+      <div style="margin-top: 2rem; font-size: 0.9rem; letter-spacing: 0.15em;">
+        <div>DATE: DECEMBER 31, 2026</div>
+        <div style="margin-top: 0.5rem;">LOCATION: GRAND BALLROOM</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. SETUP THREE.JS SCENE
+    const container = document.getElementById('webgl-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0a0915, 0.02);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 12);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // 2. CREATING GATEWAY PILLARS
+    const pillarMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true });
+    const pillarGeo = new THREE.CylinderGeometry(0.8, 1, 14, 16);
+    
+    const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
+    leftPillar.position.set(-5, 0, -3);
+    scene.add(leftPillar);
+
+    const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
+    rightPillar.position.set(5, 0, -3);
+    scene.add(rightPillar);
+
+    // 3. FLOATING PARTICLES
+    const particleCount = 300;
+    const particleGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 25;
+    }
+
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xffe4b5,
+      size: 0.08,
+      transparent: true,
+      opacity: 0.8
+    });
+
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // 4. MOUSE PARALLAX
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.0008;
+      
+      camera.position.x += (mouseX * 0.4 - camera.position.x) * 0.05;
+      camera.position.y += (mouseY * 0.4 - camera.position.y) * 0.05;
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 5. CINEMATIC ENTER TRANSITION (White Flash)
+    document.getElementById('enter-btn').addEventListener('click', () => {
+      const tl = gsap.timeline();
+
+      // Fade out title text
+      tl.to("#gateway-ui", { opacity: 0, duration: 1, ease: "power2.out" });
+
+      // Camera zooms forward through gateway
+      tl.to(camera.position, { z: -1, duration: 2, ease: "power3.in" }, "-=0.5");
+
+      // White flash screen transition
+      tl.to("#flash-overlay", { 
+        opacity: 1, 
+        duration: 1, 
+        ease: "power4.in",
+        onComplete: () => {
+          // Hide gateway and reveal invitation screen
+          document.getElementById('gateway-ui').style.display = 'none';
+          const invScreen = document.getElementById('invitation-screen');
+          invScreen.style.display = 'flex';
+        }
+      });
+
+      // Fade out white flash to reveal wedding card
+      tl.to("#flash-overlay", { opacity: 0, duration: 1.5, ease: "power2.out" });
+      tl.to("#invitation-screen", { opacity: 1, duration: 1.5 }, "-=1");
+    });
+
+    // Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
