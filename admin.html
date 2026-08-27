@@ -183,7 +183,7 @@
 
 <script>
     const SUPABASE_URL = 'https://ejjqaxlwkbcfllggonff.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G48';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function handleLogin() {
@@ -286,14 +286,12 @@
             status.style.color = '#ff8c00';
             status.innerText = 'Uploading image file...';
 
-            // 1. Upload to Supabase Storage Bucket
             const { error: uploadErr } = await db.storage
                 .from('wedding-photos')
                 .upload(filePath, file);
 
             if (uploadErr) throw uploadErr;
 
-            // 2. Get Public URL
             const { data: urlData } = db.storage
                 .from('wedding-photos')
                 .getPublicUrl(filePath);
@@ -302,7 +300,6 @@
 
             status.innerText = 'Saving photo reference to database...';
 
-            // 3. Upsert into database table
             const { error: dbErr } = await db.from('section_photos').upsert({
                 section_id,
                 position_num,
