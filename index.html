@@ -1,185 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sai Mao Sint & Nang Ngin Zat Noum — Our Story</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sai & Mao Sint - Our Journey</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            --card-bg: #141419;
+            --accent-gold: #d4af37;
+            --text-main: #e6e6e6;
+            --text-muted: #999999;
+            --border-color: #22222a;
+        }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+        }
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { width: 100%; min-height: 100%; background-color: #0a0915; font-family: 'Cinzel', serif; color: #f7e7ce; overflow-x: hidden; }
-    #webgl-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
-    
-    .gateway-ui { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-    .subtitle { font-size: 0.85rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(212, 175, 55, 0.85); margin-bottom: 1.5rem; }
-    .title { font-size: 2.8rem; letter-spacing: 0.15em; color: #fff6e5; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); line-height: 1.2; }
-    .ampersand { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: #d4af37; margin: 0.5rem 0; }
-    
-    .enter-btn { cursor: pointer; margin-top: 3rem; padding: 16px 36px; background: rgba(26, 20, 10, 0.6); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 50px; color: #fff6e5; font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 0.25em; text-transform: uppercase; backdrop-filter: blur(8px); transition: all 0.4s ease; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
-    .enter-btn:hover { border-color: #d4af37; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.03); }
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(180deg, #181820 0%, var(--bg-color) 100%);
+        }
 
-    #flash-overlay { position: fixed; inset: 0; background: #ffffff; opacity: 0; z-index: 100; pointer-events: none; }
-    #story-container { position: relative; z-index: 20; display: none; opacity: 0; width: 100%; padding-bottom: 100px; }
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-gold);
+            margin: 0;
+            letter-spacing: 3px;
+            font-weight: normal;
+        }
 
-    .invitation-section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; perspective: 1000px; }
-    .invitation-card { background: #fdfbf7; color: #2c251e; border: 2px solid #d4af37; padding: 50px 40px; max-width: 580px; width: 100%; text-align: center; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.2); transform-style: preserve-3d; transition: transform 0.15s ease-out; position: relative; }
-    .invitation-card::after { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(212, 175, 55, 0.4); pointer-events: none; }
-    
-    .timeline-section { max-width: 1100px; margin: 100px auto; padding: 0 20px; text-align: center; }
-    .section-header { margin-bottom: 2.5rem; }
-    .section-title { font-size: 2.2rem; color: #fff6e5; letter-spacing: 0.1em; }
-    .section-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #d4af37; margin-top: 0.5rem; font-size: 1.1rem; }
-    .section-letter { font-family: 'Playfair Display', serif; color: rgba(247, 231, 206, 0.85); font-size: 1.15rem; line-height: 1.8; max-width: 750px; margin: 0 auto 3rem auto; font-style: italic; background: rgba(20, 18, 35, 0.5); padding: 25px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2); }
+        header p {
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
 
-    .photo-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 2rem; }
-    .photo-grid-wedding { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 2rem; }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    .vintage-frame { background: #fdfbf7; padding: 12px 12px 35px 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-radius: 3px; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; }
-    .vintage-frame:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3); }
-    .vintage-frame img { width: 100%; height: 240px; object-fit: cover; display: block; }
-    .wedding-frame img { height: 180px; }
-    .frame-caption { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-family: 'Playfair Display', serif; font-style: italic; color: #3a3025; font-size: 0.85rem; }
-    
-    .admin-link { position: fixed; bottom: 15px; right: 15px; z-index: 99; color: rgba(212, 175, 55, 0.5); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.1em; }
-    .admin-link:hover { color: #d4af37; }
-  </style>
+        .timeline-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .section-header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: var(--accent-gold);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .letter-content {
+            font-size: 1.1rem;
+            color: #dcdcdc;
+            white-space: pre-line;
+            margin-bottom: 30px;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .photo-card {
+            background: #0f0f13;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card img:hover {
+            transform: scale(1.03);
+        }
+
+        .photo-caption {
+            padding: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            padding: 50px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
 </head>
 <body>
 
-  <div id="webgl-container"></div>
+    <header>
+        <h1>Sai & Mao Sint</h1>
+        <p>Our Wedding & Story Timeline</p>
+    </header>
 
-  <div class="gateway-ui" id="gateway-ui">
-    <div class="subtitle">A Story Written Through Time</div>
-    <div class="title">SAI MAO SINT</div>
-    <div class="ampersand">&</div>
-    <div class="title">NANG NGIN ZAT NOUM</div>
-    <button class="enter-btn" id="enter-btn">Enter Our Story</button>
-  </div>
+    <div class="container" id="timeline-container">
+        <div class="loading">Loading our story...</div>
+    </div>
 
-  <div id="flash-overlay"></div>
+    <footer>
+        <p>Forever & Always</p>
+    </footer>
 
-  <div id="story-container">
-    <section class="invitation-section">
-      <div class="invitation-card" id="invitation-card">
-        <h3>YOU ARE INVITED TO CELEBRATE THE WEDDING OF</h3>
-        <h1 id="inv-groom">Sai Mao Sint</h1>
-        <div class="ampersand" style="color: #8c733e;">&</div>
-        <h1 id="inv-bride">Nang Ngin Zat Noum</h1>
-        <p class="message" id="inv-quote">"Two people. One journey. Countless memories. And a lifetime still waiting to be written."</p>
-        <div style="margin-top: 2rem; font-size: 0.85rem; letter-spacing: 0.2em; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 1.5rem;">
-          <div id="inv-date">DATE: DECEMBER 31, 2026</div>
-          <div id="inv-location" style="margin-top: 0.5rem;">LOCATION: GRAND BALLROOM</div>
-        </div>
-      </div>
-    </section>
+    <script>
+        const SUPABASE_URL = 'https://ejjqaxlwkbcfllggonff.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqanFheGx3a2JjZmxsZ2dvbmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTAwNjEsImV4cCI6MjA1NjE2NjA2MX0.97bT-2s_K-32j2Y3VInO1C9I0Pqg1O-6s8x1y6z2G';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <div id="timeline-sections"></div>
-  </div>
+        async function fetchStory() {
+            const container = document.getElementById('timeline-container');
 
-  <a href="admin.html" class="admin-link">Dashboard Login ⚙</a>
+            try {
+                // Fetch story sections ordered by section_order
+                const { data: sections, error: secErr } = await db
+                    .from('story_sections')
+                    .select('*')
+                    .order('section_order', { ascending: true });
 
-  <script>
-    const container = document.getElementById('webgl-container');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0a0915, 0.018);
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 12);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+                if (secErr) throw secErr;
 
-    const pillarMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true });
-    const pillarGeo = new THREE.CylinderGeometry(0.8, 1, 14, 16);
-    const leftPillar = new THREE.Mesh(pillarGeo, pillarMat); leftPillar.position.set(-5, 0, -3); scene.add(leftPillar);
-    const rightPillar = new THREE.Mesh(pillarGeo, pillarMat); rightPillar.position.set(5, 0, -3); scene.add(rightPillar);
+                // Fetch all uploaded photos ordered by position
+                const { data: photos, error: photoErr } = await db
+                    .from('section_photos')
+                    .select('*')
+                    .order('position_num', { ascending: true });
 
-    const particleCount = 400; const particleGeo = new THREE.BufferGeometry(); const positions = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i++) positions[i] = (Math.random() - 0.5) * 30;
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0xffe4b5, size: 0.09, transparent: true, opacity: 0.75 }));
-    scene.add(particles);
+                if (photoErr) throw photoErr;
 
-    let mouseX = 0, mouseY = 0;
-    window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; mouseY = -(e.clientY / window.innerHeight - 0.5) * 2; });
-    function animate() {
-      requestAnimationFrame(animate); particles.rotation.y += 0.0006;
-      camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.05;
-      camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.05;
-      camera.lookAt(0, 0, 0); renderer.render(scene, camera);
-    }
-    animate();
+                container.innerHTML = '';
 
-    document.getElementById('enter-btn').addEventListener('click', () => {
-      const tl = gsap.timeline();
-      tl.to("#gateway-ui", { opacity: 0, duration: 1, ease: "power2.out" });
-      tl.to(camera.position, { z: -1, duration: 2, ease: "power3.in" }, "-=0.5");
-      tl.to("#flash-overlay", { opacity: 1, duration: 1, ease: "power4.in", onComplete: () => {
-        document.getElementById('gateway-ui').style.display = 'none';
-        document.getElementById('story-container').style.display = 'block';
-      }});
-      tl.to("#flash-overlay", { opacity: 0, duration: 1.5, ease: "power2.out" });
-      tl.to("#story-container", { opacity: 1, duration: 1.5 }, "-=1");
-    });
+                if (!sections || sections.length === 0) {
+                    container.innerHTML = '<div class="loading">No story sections found yet.</div>';
+                    return;
+                }
 
-    const SUPABASE_URL = "https://ejjqaxlwkbcfllggonff.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_p-QpdFPCd4at60SvCAEpfg_Z0Y8wTGQ";
+                // Render each section and its photos
+                sections.forEach(sec => {
+                    const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
 
-    const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    async function loadStory() {
-      try {
-        const { data: sections } = await dbClient.from('story_sections').select('*').order('section_order', { ascending: true });
-        const { data: photos } = await dbClient.from('section_photos').select('*').order('photo_order', { ascending: true });
+                    let photosHTML = '';
+                    if (secPhotos.length > 0) {
+                        photosHTML = `<div class="photo-gallery">`;
+                        secPhotos.forEach(p => {
+                            photosHTML += `
+                                <div class="photo-card">
+                                    <img src="${p.image_url}" alt="${p.caption || 'Story Photo'}" loading="lazy">
+                                    ${p.caption ? `<div class="photo-caption">${p.caption}</div>` : ''}
+                                </div>
+                            `;
+                        });
+                        photosHTML += `</div>`;
+                    }
 
-        if (!sections || sections.length === 0) return;
-        
-        const container = document.getElementById('timeline-sections');
-        container.innerHTML = sections.map(sec => {
-          const secPhotos = photos ? photos.filter(p => p.section_id === sec.id) : [];
-          const isWedding = sec.section_order === 6;
-          const gridClass = isWedding ? 'photo-grid-wedding' : 'photo-grid-3';
-          const frameClass = isWedding ? 'vintage-frame wedding-frame' : 'vintage-frame';
+                    const sectionBlock = `
+                        <div class="timeline-section">
+                            <div class="section-header">
+                                <h2 class="section-title">${sec.title || ''}</h2>
+                                ${sec.subtitle ? `<div class="section-subtitle">${sec.subtitle}</div>` : ''}
+                            </div>
+                            ${sec.letter_text ? `<div class="letter-content">${sec.letter_text}</div>` : ''}
+                            ${photosHTML}
+                        </div>
+                    `;
 
-          const totalSlots = isWedding ? 20 : 3;
-          let photoMarkup = '';
+                    container.innerHTML += sectionBlock;
+                });
 
-          for (let i = 0; i < totalSlots; i++) {
-            const p = secPhotos[i];
-            const imgUrl = p ? p.photo_url : 'https://via.placeholder.com/400x300/1e1b2e/d4af37?text=Photo+Slot+'+(i+1);
-            const caption = p ? p.caption : 'Memory Slot ' + (i + 1);
-            photoMarkup += `
-              <div class="${frameClass}">
-                <img src="${imgUrl}" alt="${caption}" />
-                <div class="frame-caption">${caption}</div>
-              </div>
-            `;
-          }
+            } catch (err) {
+                container.innerHTML = `<div class="loading" style="color:#ff4d4d;">Error loading content: ${err.message}</div>`;
+            }
+        }
 
-          return `
-            <section class="timeline-section">
-              <div class="section-header">
-                <h2 class="section-title">${sec.title}</h2>
-                <div class="section-subtitle">${sec.subtitle || ''}</div>
-              </div>
-              <div class="section-letter">"${sec.letter_text || ''}"</div>
-              <div class="${gridClass}">${photoMarkup}</div>
-            </section>
-          `;
-        }).join('');
-      } catch (e) {
-        console.error("Supabase load error:", e);
-      }
-    }
-    loadStory();
-  </script>
+        fetchStory();
+    </script>
 </body>
 </html>
